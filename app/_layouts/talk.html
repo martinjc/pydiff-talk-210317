@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+{% include head.html %}
+
+<body>
+
+    <div class="reveal">
+        <div class="slides">
+            {% assign items = site.slides | sort: 'index' %}
+            {% for slide in items %}
+                <section>
+                    {{slide.content}}
+                </section>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% include footer.html %}
+</body>
+</html>

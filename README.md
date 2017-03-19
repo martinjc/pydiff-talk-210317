@@ -1,2 +1,2 @@
 # pydiff-talk-210317
-lightning talk for 21/03/17
+Slides for my lightning talk at [PyDiff](http://pydiff.wales) on 21-03-17
