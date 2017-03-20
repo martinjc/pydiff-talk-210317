@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><title>reveal.js – The HTML Presentation Framework</title><meta name=description content="My lightning talk for the pydiff lightning talk special"><meta name=author content="Martin Chorley"><meta name=apple-mobile-web-app-capable content=yes><meta name=apple-mobile-web-app-status-bar-style content=black-translucent><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><link rel=stylesheet href=/pydiff-talk-210317/vendor/reveal/css/reveal.css><link rel=stylesheet href=/pydiff-talk-210317/css/main.css><link rel=canonical href=https://martinjc.github.io/pydiff-talk-210317/ ><link rel=stylesheet href=/pydiff-talk-210317/vendor/reveal/lib/css/zenburn.css><script>var link=document.createElement("link");link.rel="stylesheet",link.type="text/css",link.href=window.location.search.match(/print-pdf/gi)?"/pydiff-talk-210317/vendor/reveal/css/print/pdf.css":"/pydiff-talk-210317/vendor/reveal/css/print/paper.css",document.getElementsByTagName("head")[0].appendChild(link)</script></head><body><div class=reveal><div class=slides><section><section><h1>Impersonating Vince</h1><p><a href=http://martinjc.com>Martin Chorley</a> - <a href=http://twitter.com/martinjc>@martinjc</a></p><p><small>PyDiff Lightning Talk Special - 21st March 2017</small></p></section></section><section><section data-background-image=media/conspiracy.png></section></section><section><section><h1>Evidence</h1><p>I have evidence!</p><p>It is remarkably easy to fake a twitter account...</p></section></section><section><section><h1>Ingredients</h1><ol><li>A source of example data</li><li>An algorithm to create tweets</li></ol></section></section><section><section><img class=screenshot src=media/vince.png alt=""></section></section><section><section><pre>
+    <code class=stretch>
+# assume there are more tweets to retrieve
+more_tweets = True
+
+# while there are more tweets to retrieve
+while(more_tweets):
+
+    # make an api call to get the tweets prior
+    # to our earliest retrieved tweet so far
+    params = {
+        "screen_name": am,
+        "count": 200,
+        "exclude_replies": "false",
+        "max_id": earliest_id
+    }
+
+    new_tweets = ta.query_get("statuses", "user_timeline", params)
+
+    # add the newly retrieved tweets to our list
+    tweets.extend(new_tweets)
+
+    # find the earliest retrieved tweet
+    current_earliest = earliest_id
+    for tweet in tweets:
+        if tweet["id"] &lt; earliest_id:
+            earliest_id = tweet["id"]
+
+    # if the earliest tweet hasn't changed
+    # we can't go back any further
+    if current_earliest == earliest_id:
+        more_tweets=False
+    </code>
+    </pre></section></section><section><section><img src=media/vince_text.png alt=""></section></section><section><section><h1>3625 Tweets!</h1><img src=media/vince_text2.png alt=""></section></section><section><section><h1>Algorithm</h1><p>We want to generate realistic looking text</p><p>Text that looks like Vince wrote it.</p><p>Given a word `A`, what is the probability that Vince uses the word `B` next?</p></section></section><section><section><img src=media/markov_1.png></section></section><section><section><img src=media/markov_2.png></section></section><section><section><img style=max-height:70%;max-width:70% src=media/markov_3.png></section></section><section><section><img src=media/markov_4.png alt=""></section></section><section><section><pre>
+        <code>
+data = tweets_file.read()
+words = data.split()
+words = [word for word in words if word.find('http') &lt; 0 and word.find('@') &lt; 0]
+return words
+        </code>
+    </pre></section></section><section><section><pre>
+        <code class=stretch>
+def triples(words):
+
+    if len(words) &lt; 3:
+        return
+
+    for i in range(len(words) - 2):
+        yield (words[i], words[i+1], words[i+2])
+
+def database(words):
+    cache = {}
+    for w1, w2, w3 in triples(words):
+        key = (w1, w2)
+        if key in cache:
+            cache[key].append(w3)
+        else:
+            cache[key] = [w3]
+    return cache
+        </code>
+    </pre></section></section><section><section><pre>
+        <code class=stretch>
+def generate_markov_text(size=25, words, cache):
+    seed = random.randint(0, len(words)-3)
+
+    seed_word, next_word = words[seed], words[seed+1]
+    w1, w2 = seed_word, next_word
+
+    gen_words = []
+
+    for i in range(size):
+        gen_words.append(w1)
+        w1, w2 = w2, random.choice(cache[(w1, w2)])
+
+    gen_words.append(w2)
+    return ' '.join(gen_words)
+
+        </code>
+    </pre></section></section><section><section><img src=media/realvince.png alt=""></section></section><section><section><img style=max-height:60% src=media/github.png alt=""><p>https://github.com/martinjc/deckard</p></section></section><section><section><h1>Conclusion</h1><p>The conspiracy is real</p><p>All our Twitter accounts are fake</p></section></section></div></div><script src=/pydiff-talk-210317/vendor/reveal/lib/js/head.min.js></script><script src=/pydiff-talk-210317/vendor/reveal/js/reveal.js></script><script>Reveal.initialize({controls:!0,progress:!0,slideNumber:!0,history:!0,center:!0,width:"100%",height:"100%",margin:0,minScale:1,maxScale:1,transition:"slide",transitionSpeed:"fast",dependencies:[{src:"/pydiff-talk-210317/vendor/reveal/lib/js/classList.js",condition:function(){return!document.body.classList}},{src:"/pydiff-talk-210317/vendor/reveal/plugin/markdown/marked.js",condition:function(){return!!document.querySelector("[data-markdown]")}},{src:"/pydiff-talk-210317/vendor/reveal/plugin/markdown/markdown.js",condition:function(){return!!document.querySelector("[data-markdown]")}},{src:"/pydiff-talk-210317/vendor/reveal/plugin/highlight/highlight.js",async:!0,callback:function(){hljs.initHighlightingOnLoad()}},{src:"/pydiff-talk-210317/vendor/reveal/plugin/zoom-js/zoom.js",async:!0},{src:"/pydiff-talk-210317/vendor/reveal/plugin/notes/notes.js",async:!0}]})</script><script src=/pydiff-talk-210317/js/main.js></script></body></html>
