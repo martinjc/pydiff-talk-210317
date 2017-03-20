@@ -1,5 +1,5 @@
 ---
-title: "Social Assembly"
+title: "Impersonating Vince"
 layout: slide
 index: 1
 ---

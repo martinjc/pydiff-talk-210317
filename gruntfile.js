@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                 tasks: ['bowercopy:server', 'jekyll:server', 'todo']
             },
             images: {
-                files: ['<%= app.source %>/img/**/*.{gif,jpg,jpeg,png,svg,webp}'],
+                files: ['<%= app.source %>/img/**/*.{gif,jpg,jpeg,png,svg,webp}', '<%= app.source %>/media/**/*.{gif,jpg,jpeg,png,svg,webp}'],
                 tasks: ['copy:server']
             },
             livereload: {
